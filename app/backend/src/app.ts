@@ -1,4 +1,5 @@
 import * as express from 'express';
+import UsersControllers from './database/controllers/Users';
 
 class App {
   public app: express.Express;
@@ -20,6 +21,7 @@ class App {
     };
 
     this.app.use(accessControl);
+    this.app.use(express.json());
     // ...
   }
 
@@ -29,6 +31,7 @@ class App {
     this.app.listen(PORT, () => {
       console.log(`Rodando na porta ${PORT}`);
     });
+    this.app.post('/login', UsersControllers.Login);
   }
 }
 
