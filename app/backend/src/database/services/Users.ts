@@ -1,4 +1,5 @@
 import Jwt = require('jsonwebtoken');
+import bcrypt = require('bcryptjs');
 import { IResponse, IUserLogin, IUser } from '../interfaces';
 import Users from '../models/Users';
 
@@ -38,44 +39,43 @@ const secret = 'super_senha';
 //   return prepareResponse(true, 250, '');
 // };
 
-const validateLogin = (userToLoginValid: IUser | null, username: string, password: string) => {
-  if (!userToLoginValid) return prepareResponse(false, 400, 'Login invalid');
-  if (username === userToLoginValid.username && password === userToLoginValid.password) {
-    return prepareResponse(true, 200, userToLoginValid);
-  }
-  return prepareResponse(false, 400, 'Login invalid');
-};
+// const validateLogin = (userToLoginValid: IUser | null, email: string, password: string) => {
+//   if (!userToLoginValid) return prepareResponse(false, 400, { error: 'Login invalid' });
+//   if (email === userToLoginValid.email && password === userToLoginValid.password) {
+//     return prepareResponse(true, 200, userToLoginValid);
+//   }
+//   return prepareResponse(false, 400, { error: 'Login invalid' });
+// };
 
 const doLogin = async (userToLogin: IUserLogin): Promise<IResponse> => {
-  const { username, password } = userToLogin;
+  const { email, password } = userToLogin;
 
-  // const usernameResp = validateUsername(username);
-  // const passwordResp = validatePassword(password);
+  if (!email) { return prepareResponse(false, 400, { error: 'Invalid Email' }); }
+  if (!password) { return prepareResponse(false, 400, { error: 'Invalid password' }); }
 
-  // if (!usernameResp.success) return usernameResp;
-  // if (!passwordResp.success) return passwordResp;
-
-  const userToLoginValid: IUser | null = await Users.findOne({
-    where: { username },
+  const userToLoginValid = await Users.findOne({
+    where: { email },
     // attributes: { exclude: ['password'] },
   });
 
-  const loginResp = validateLogin(userToLoginValid, username, password);
-  if (!loginResp.success) return loginResp;
-
-  const token = await Jwt.sign({ username, password }, secret);
-
-  if (userToLoginValid !== null) {
-    const user2: IUser = {
-      id: userToLoginValid.id,
-      username: userToLoginValid.username,
-      role: userToLoginValid.role,
-      email: userToLoginValid.email,
-    };
-    return prepareResponse(true, 200, { user: user2, token });
+  if (!userToLoginValid) {
+    return prepareResponse(false, 400, { error: 'User not Found' });
   }
 
-  return prepareResponse(true, 666, { user: userToLoginValid, token });
+  const comparePass = await bcrypt.compare(password, userToLoginValid.password);
+  if (!comparePass) { return prepareResponse(false, 400, { error: 'Invalid Password' }); }
+
+  // const loginResp = validateLogin(userToLoginValid, email, password);
+  // if (!loginResp.success) return loginResp;
+
+  const token = await Jwt.sign({ email, password }, secret);
+
+  const user2: IUser | null = await Users.findOne({
+    where: { email },
+    attributes: { exclude: ['password'] },
+  });
+
+  return prepareResponse(true, 200, { user: user2, token });
 };
 
 export default {
