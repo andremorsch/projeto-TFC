@@ -23,6 +23,8 @@ class App {
     this.app.use(accessControl);
     this.app.use(express.json());
     // ...
+    this.app.post('/login', UsersControllers.Login);
+    this.app.get('/login/validate', UsersControllers.LoginValidate);
   }
 
   // ...
@@ -31,7 +33,6 @@ class App {
     this.app.listen(PORT, () => {
       console.log(`Rodando na porta ${PORT}`);
     });
-    this.app.post('/login', UsersControllers.Login);
   }
 }
 

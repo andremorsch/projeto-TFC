@@ -11,6 +11,15 @@ const Login = async (req: Request, res: Response): Promise<void> => {
   res.status(doLogin.code).json(doLogin.message);
 };
 
+const LoginValidate = async (req: Request, res: Response): Promise<void> => {
+  const { authorization } = req.headers;
+
+  const validateLogin = await UsersServices.validateLogin(authorization);
+
+  res.status(validateLogin.code).json(validateLogin.message);
+};
+
 export default {
   Login,
+  LoginValidate,
 };
