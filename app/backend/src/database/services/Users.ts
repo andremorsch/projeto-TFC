@@ -15,6 +15,9 @@ const prepareResponse = (
 
 const secret = 'super_senha';
 
+const errorMessage1 = { message: 'Incorrect email or password' };
+const errorMessage2 = { message: 'All fields must be filled' };
+
 // const validateUsername = (username: string): IResponse => {
 //   if (!username) return prepareResponse(false, 400, { error: 'Username is required' });
 //   if (typeof username !== 'string') {
@@ -47,35 +50,45 @@ const secret = 'super_senha';
 //   return prepareResponse(false, 400, { error: 'Login invalid' });
 // };
 
+const makeUserResponse = (userToLoginValid: IUser): IUser => {
+  const userResponse: IUser = {
+    id: userToLoginValid.id,
+    username: userToLoginValid.username,
+    role: userToLoginValid.role,
+    email: userToLoginValid.email,
+  };
+  return userResponse;
+};
+
 const doLogin = async (userToLogin: IUserLogin): Promise<IResponse> => {
   const { email, password } = userToLogin;
 
-  if (!email) { return prepareResponse(false, 400, { error: 'Invalid Email' }); }
-  if (!password) { return prepareResponse(false, 400, { error: 'Invalid password' }); }
+  if (!email) { return prepareResponse(false, 400, errorMessage2); }
+  if (!password) { return prepareResponse(false, 400, errorMessage2); }
 
   const userToLoginValid = await Users.findOne({
     where: { email },
-    // attributes: { exclude: ['password'] },
   });
 
   if (!userToLoginValid) {
-    return prepareResponse(false, 400, { error: 'User not Found' });
+    return prepareResponse(false, 400, errorMessage1);
   }
 
+  const { role } = userToLoginValid;
+
   const comparePass = await bcrypt.compare(password, userToLoginValid.password);
-  if (!comparePass) { return prepareResponse(false, 400, { error: 'Invalid Password' }); }
+  if (!comparePass) { return prepareResponse(false, 400, errorMessage1); }
 
-  // const loginResp = validateLogin(userToLoginValid, email, password);
-  // if (!loginResp.success) return loginResp;
+  const token = await Jwt.sign({ email, password, role }, secret);
 
-  const token = await Jwt.sign({ email, password }, secret);
+  const userResponse = makeUserResponse(userToLoginValid);
 
-  const user2: IUser | null = await Users.findOne({
-    where: { email },
-    attributes: { exclude: ['password'] },
-  });
+  // const user2: IUser | null = await Users.findOne({
+  //   where: { email },
+  //   attributes: { exclude: ['password'] },
+  // });
 
-  return prepareResponse(true, 200, { user: user2, token });
+  return prepareResponse(true, 200, { user: userResponse, token });
 };
 
 export default {
