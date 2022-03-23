@@ -88,7 +88,7 @@ const doLogin = async (userToLogin: IUserLogin): Promise<IResponse> => {
   //   attributes: { exclude: ['password'] },
   // });
 
-  return prepareResponse(true, 200, { user: userResponse, token });
+  return prepareResponse(true, 201, { user: userResponse, token });
 };
 
 const validateLogin = async (auth: string | undefined) => {
