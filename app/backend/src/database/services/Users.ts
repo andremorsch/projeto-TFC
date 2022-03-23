@@ -97,7 +97,7 @@ const validateLogin = async (auth: string | undefined) => {
       const decoded = await Jwt.verify(auth, secret);
       if (typeof decoded === 'object') {
         const { role } = decoded;
-        return prepareResponse(true, 201, role);
+        return prepareResponse(true, 200, role);
       }
       return prepareResponse(true, 666, { message: 'erro' });
     }
