@@ -63,21 +63,21 @@ const makeUserResponse = (userToLoginValid: IUser): IUser => {
 const doLogin = async (userToLogin: IUserLogin): Promise<IResponse> => {
   const { email, password } = userToLogin;
 
-  if (!email) { return prepareResponse(false, 400, errorMessage2); }
-  if (!password) { return prepareResponse(false, 400, errorMessage2); }
+  if (!email) { return prepareResponse(false, 401, errorMessage2); }
+  if (!password) { return prepareResponse(false, 401, errorMessage2); }
 
   const userToLoginValid = await Users.findOne({
     where: { email },
   });
 
   if (!userToLoginValid) {
-    return prepareResponse(false, 400, errorMessage1);
+    return prepareResponse(false, 401, errorMessage1);
   }
 
   const { role } = userToLoginValid;
 
   const comparePass = await bcrypt.compare(password, userToLoginValid.password);
-  if (!comparePass) { return prepareResponse(false, 400, errorMessage1); }
+  if (!comparePass) { return prepareResponse(false, 401, errorMessage1); }
 
   const token = await Jwt.sign({ email, password, role }, secret);
 
@@ -91,6 +91,33 @@ const doLogin = async (userToLogin: IUserLogin): Promise<IResponse> => {
   return prepareResponse(true, 200, { user: userResponse, token });
 };
 
+const validateLogin = async (auth: string | undefined) => {
+  try {
+    if (typeof auth === 'string') {
+      const decoded = await Jwt.verify(auth, secret);
+      if (typeof decoded === 'object') {
+        const { role } = decoded;
+        return prepareResponse(true, 201, role);
+      }
+      return prepareResponse(true, 666, { message: 'erro' });
+    }
+
+    return prepareResponse(false, 401, { message: 'Need a auth' });
+  } catch (e) {
+    return prepareResponse(false, 401, { message: 'Auth invalid' });
+  }
+
+  // if (!auth) { return prepareResponse(false, 401, { message: 'Need a auth' }); }
+  // const decoded = await Jwt.decode(auth);
+  // console.log(decoded);
+
+  // // const { role } = decoded;
+
+  // if (!decoded) { return prepareResponse(false, 401, { message: 'Invalid Auth' }); }
+  // return
+};
+
 export default {
   doLogin,
+  validateLogin,
 };
