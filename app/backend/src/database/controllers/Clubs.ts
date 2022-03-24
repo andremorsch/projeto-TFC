@@ -7,6 +7,17 @@ const GetAll = async (_req: Request, res: Response) => {
   res.status(allClubs.code).json(allClubs.message);
 };
 
+const GetById = async (req: Request, res: Response) => {
+  const { id } = req.params;
+
+  const idNumber = Number(id);
+
+  const clubById = await ClubsServices.GetById(idNumber);
+
+  res.status(clubById.code).json(clubById.message);
+};
+
 export default {
   GetAll,
+  GetById,
 };
