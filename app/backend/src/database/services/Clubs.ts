@@ -21,6 +21,20 @@ const GetAll = async () => {
   }
 };
 
+const GetById = async (id: number) => {
+  if (!id) {
+    return prepareResponse(false, 404, { message: 'Need a real number' });
+  }
+
+  const club = await Clubs.findOne({ where: { id } });
+  if (club) {
+    return prepareResponse(true, 200, club);
+  }
+
+  return prepareResponse(true, 404, { message: 'Dont have a club with this id' });
+};
+
 export default {
   GetAll,
+  GetById,
 };
