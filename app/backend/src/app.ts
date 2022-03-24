@@ -30,6 +30,7 @@ class App {
     this.app.get('/clubs', ClubsControllers.GetAll);
     this.app.get('/clubs/:id', ClubsControllers.GetById);
     this.app.get('/matchs', MatchsController.GetAll);
+    this.app.post('/matchs', MatchsController.Create);
   }
 
   // ...
