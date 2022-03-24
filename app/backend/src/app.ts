@@ -1,6 +1,7 @@
 import * as express from 'express';
 import UsersControllers from './database/controllers/Users';
 import ClubsControllers from './database/controllers/Clubs';
+import MatchsController from './database/controllers/Matchs';
 
 class App {
   public app: express.Express;
@@ -28,6 +29,7 @@ class App {
     this.app.get('/login/validate', UsersControllers.LoginValidate);
     this.app.get('/clubs', ClubsControllers.GetAll);
     this.app.get('/clubs/:id', ClubsControllers.GetById);
+    this.app.get('/matchs', MatchsController.GetAll);
   }
 
   // ...
