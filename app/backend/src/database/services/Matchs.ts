@@ -44,14 +44,15 @@ const Create = async (matchObj: IMatch, authorization: string) => {
   try {
     const { homeTeam, awayTeam, inProgress } = matchObj;
     await Jwt.verify(authorization, secret);
+    
+    if (homeTeam === awayTeam) {
+      return prepareResponse(false, 401, { message: messageError1 });
+    }
     if (await existClub(homeTeam, awayTeam) === false) {
       return prepareResponse(false, 401, { message: 'There is no team with such id!' });
     }
     if (!inProgress) {
       return prepareResponse(false, 401, { message: 'Match must be in progress' });
-    }
-    if (homeTeam === awayTeam) {
-      return prepareResponse(false, 401, { message: messageError1 });
     }
 
     const match = await Matchs.create(matchObj);
