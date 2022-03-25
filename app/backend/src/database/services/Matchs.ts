@@ -44,7 +44,7 @@ const Create = async (matchObj: IMatch, authorization: string) => {
   try {
     const { homeTeam, awayTeam, inProgress } = matchObj;
     await Jwt.verify(authorization, secret);
-    
+
     if (homeTeam === awayTeam) {
       return prepareResponse(false, 401, { message: messageError1 });
     }
