@@ -17,7 +17,13 @@ const Create = async (req: Request, res: Response) => {
   res.status(match.code).json(match.message);
 };
 
+const Finish = async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const toFinish = await MatchsServices.Finish(Number(id));
+  res.status(toFinish.code).json(toFinish.message);
+};
 export default {
   GetAll,
   Create,
+  Finish,
 };
