@@ -56,7 +56,7 @@ const Create = async (matchObj: IMatch, authorization: string) => {
 
     const match = await Matchs.create(matchObj);
 
-    return prepareResponse(true, 200, match);
+    return prepareResponse(true, 201, match);
   } catch (error) {
     return prepareResponse(false, 401, { message: 'Invalid Token' });
   }
