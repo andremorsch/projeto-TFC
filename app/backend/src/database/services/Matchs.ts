@@ -72,8 +72,21 @@ const Finish = async (id: number) => {
   return prepareResponse(true, 200, { message: 'Match finished' });
 };
 
+const Update = async (id: number, homeTeamGoals: number, awayTeamGoals: number) => {
+  const matchToUpdate = await Matchs.update(
+    { homeTeamGoals, awayTeamGoals },
+    { where: { id } },
+  );
+  if (!matchToUpdate) {
+    return prepareResponse(false, 404, { message: 'Match not found' });
+  }
+
+  return prepareResponse(true, 200, { message: 'Match updated' });
+};
+
 export default {
   GetAll,
   Create,
   Finish,
+  Update,
 };
