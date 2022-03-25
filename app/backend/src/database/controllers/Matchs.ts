@@ -22,8 +22,17 @@ const Finish = async (req: Request, res: Response) => {
   const toFinish = await MatchsServices.Finish(Number(id));
   res.status(toFinish.code).json(toFinish.message);
 };
+
+const Update = async (req: Request, res: Response) => {
+  const { id } = req.params;
+  const { homeTeamGoals, awayTeamGoals } = req.body;
+  const toUpdate = await MatchsServices.Update(Number(id), homeTeamGoals, awayTeamGoals);
+  res.status(toUpdate.code).json(toUpdate.message);
+};
+
 export default {
   GetAll,
   Create,
   Finish,
+  Update,
 };
