@@ -63,7 +63,17 @@ const Create = async (matchObj: IMatch, authorization: string) => {
   }
 };
 
+const Finish = async (id: number) => {
+  const matchToFinish = await Matchs.update({ inProgress: false }, { where: { id } });
+  if (!matchToFinish) {
+    return prepareResponse(false, 404, { message: 'Match not found' });
+  }
+
+  return prepareResponse(true, 200, { message: 'Match finished' });
+};
+
 export default {
   GetAll,
   Create,
+  Finish,
 };
