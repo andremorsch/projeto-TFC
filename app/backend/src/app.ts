@@ -31,8 +31,7 @@ class App {
     this.app.get('/login/validate', UsersControllers.LoginValidate);
     this.app.get('/clubs', ClubsControllers.GetAll);
     this.app.get('/clubs/:id', ClubsControllers.GetById);
-    this.app.get('/matchs', MatchsController.GetAll);
-    this.app.post('/matchs', MatchsController.Create);
+    this.app.route('/matchs').get(MatchsController.GetAll).post(MatchsController.Create);
   }
 
   // ...
