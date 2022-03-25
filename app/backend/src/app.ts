@@ -1,4 +1,5 @@
 import * as express from 'express';
+import * as cors from 'cors';
 import UsersControllers from './database/controllers/Users';
 import ClubsControllers from './database/controllers/Clubs';
 import MatchsController from './database/controllers/Matchs';
@@ -24,6 +25,7 @@ class App {
 
     this.app.use(accessControl);
     this.app.use(express.json());
+    this.app.use(cors());
     // ...
     this.app.post('/login', UsersControllers.Login);
     this.app.get('/login/validate', UsersControllers.LoginValidate);
