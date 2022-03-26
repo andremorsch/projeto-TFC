@@ -79,7 +79,7 @@ const sortClubsLeaderboard = (clubs: ILeaderboard[]) => (
   })
 );
 
-export const GetAll = async (): Promise<IResponse> => {
+const GetAll = async (): Promise<IResponse> => {
   const clubs = await Clubs.findAll();
 
   if (!clubs.length) {
