@@ -3,6 +3,7 @@ import * as cors from 'cors';
 import UsersControllers from './database/controllers/Users';
 import ClubsControllers from './database/controllers/Clubs';
 import MatchsController from './database/controllers/Matchs';
+import LeaderboardsController from './database/controllers/Leaderboards';
 
 class App {
   public app: express.Express;
@@ -34,6 +35,7 @@ class App {
     this.app.route('/matchs').get(MatchsController.GetAll).post(MatchsController.Create);
     this.app.patch('/matchs/:id/finish', MatchsController.Finish);
     this.app.patch('/matchs/:id', MatchsController.Update);
+    this.app.get('/leaderboard/home', LeaderboardsController.GetAll);
   }
 
   // ...
